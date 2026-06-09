@@ -1,0 +1,8 @@
+outputs/
+__pycache__/
+*.png
+*.jpg
+.env
+venv/
+*.safetensors
+*.bin
