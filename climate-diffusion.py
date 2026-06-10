@@ -1,7 +1,8 @@
 
+import os
 from diffusers import StableDiffusionPipeline
 import torch
-import os
+
 
 
 model_id = "stable-diffusion-v1-5/stable-diffusion-v1-5"
@@ -11,37 +12,54 @@ pipe = StableDiffusionPipeline.from_pretrained(
     torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32
 )
 
-
 device = "mps" if torch.backends.mps.is_available() else "cpu"
 pipe = pipe.to(device)
 
-print(f"Model loaded on: {device}")
-
 os.makedirs("outputs", exist_ok=True)
-print("Output folder ready")
+
+print("Climate Change Image Generator")
+print("-----------------------------------")
+print("Type 'quit' at any prompt to exit.\n")
+print("What do you think the future will look like? " )
 
 
-prompts = [
-    ("healthy_ocean", "a thriving coral reef, underwater, vibrant colors, diverse marine life, photorealistic, 8k"),
-    ("dying_ocean", "a bleached dead coral reef, underwater, grey and white, eerie, no fish, photorealistic, 8k"),
-    ("healthy_forest", "a lush green Amazon rainforest, misty, full of wildlife, golden hour, photorealistic"),
-    ("deforested", "a deforested Amazon rainforest, barren land, tree stumps, smoke, dramatic sky, photorealistic"),
-    ("flooded_city", "a coastal city flooded by rising sea levels, abandoned buildings, dramatic, cinematic lighting"),
-]
+while True:
 
-for filename, prompt in prompts:
-    print(f"Generating: {filename}...")
-    
+    location = input("Location or environment (e.g. Arctic, coral reef, coastal city): ").strip()
+    if location.lower() == "quit":
+        print("Goodbye!")
+        break
+
+    condition = input("Condition (e.g. healthy and thriving / flooded / deforested): ").strip()
+    if condition.lower() == "quit":
+        print("Goodbye!")
+        break
+
+    style = input("Visual style (e.g. photorealistic, cinematic, aerial drone shot, 8k): ").strip()
+    if style.lower() == "quit":
+        print("Goodbye!")
+        break
+
+    filename = input("Image name (no spaces, no .png): ").strip().replace(" ", "_")
+    if filename.lower() == "quit":
+        print("Goodbye!")
+        break
+    if filename == "":
+        print("Please enter a name.\n")
+        continue
+
+    prompt = f"a {condition} {location}, {style}, highly detailed"
+    negative_prompt = "blurry, low quality, cartoon, painting, drawing"
+
+    print(f"\nGenerated prompt: '{prompt}'")
+    print(f"Generating image...")
+
     image = pipe(
         prompt,
         num_inference_steps=30,
         guidance_scale=7.5,
-        negative_prompt="blurry, low quality, cartoon, painting, drawing"
+        negative_prompt=negative_prompt
     ).images[0]
-    
+
     image.save(f"outputs/{filename}.png")
-    print(f"Saved: outputs/{filename}.png")
-
-print("All images generated!")
-
-
+    print(f"Saved: outputs/{filename}.png\n")
