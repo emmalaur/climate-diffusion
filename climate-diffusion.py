@@ -2,6 +2,7 @@
 import os
 from diffusers import StableDiffusionPipeline
 import torch
+import csv
 
 
 model_id = "stable-diffusion-v1-5/stable-diffusion-v1-5"
@@ -57,6 +58,11 @@ while True:
     if filename == "":
         print("Please enter a name.\n")
         continue
+    if os.path.exists(f"outputs/{filename}.png"):
+       print(f"Warning: outputs/{filename}.png already exists and will be overwritten.")
+       confirm = input("Continue? (y/n): ").strip().lower()
+       if confirm != "y":
+          continue
 
     prompt = f"a {condition} {location}, {style}, highly detailed with a {centerImage} in its center."
     negative_prompt = "blurry, low quality, cartoon, painting, drawing"
@@ -73,3 +79,8 @@ while True:
 
     image.save(f"outputs/{filename}.png")
     print(f"Saved: outputs/{filename}.png\n")
+
+
+with open("outputs/log.csv", "a", newline="") as f:
+    writer = csv.writer(f)
+    writer.writerow([filename, prompt, style])
