@@ -4,7 +4,6 @@ from diffusers import StableDiffusionPipeline
 import torch
 
 
-
 model_id = "stable-diffusion-v1-5/stable-diffusion-v1-5"
 
 pipe = StableDiffusionPipeline.from_pretrained(
@@ -17,24 +16,35 @@ pipe = pipe.to(device)
 
 os.makedirs("outputs", exist_ok=True)
 
+print("-----------------------------------")
 print("Climate Change Image Generator")
 print("-----------------------------------")
 print("Type 'quit' at any prompt to exit.\n")
-print("What do you think the future will look like? " )
+print("What do you think the future will look like if we don't start taking climate change serious? " )
+print("-----------------------------------")
 
 
 while True:
 
-    location = input("Location or environment (e.g. Arctic, coral reef, coastal city): ").strip()
+    print("Where are you? Maybe near a coral reef or on the streets of NYC? ")
+    location = input("Location or environment: ").strip()
     if location.lower() == "quit":
         print("Goodbye!")
         break
 
-    condition = input("Condition (e.g. healthy and thriving / flooded / deforested): ").strip()
+    print("Do you think the environment will be healthy and thriving or rather flooded or deforested ? ")
+    condition = input("Condition: ").strip()
     if condition.lower() == "quit":
         print("Goodbye!")
         break
 
+    print("Is there a center object, human or animal you would like to describe? ")
+    centerImage = input("Center Image: ").strip()
+    if location.lower() == "quit":
+        print("Goodbye!")
+        break
+
+    
     style = input("Visual style (e.g. photorealistic, cinematic, aerial drone shot, 8k): ").strip()
     if style.lower() == "quit":
         print("Goodbye!")
@@ -48,7 +58,7 @@ while True:
         print("Please enter a name.\n")
         continue
 
-    prompt = f"a {condition} {location}, {style}, highly detailed"
+    prompt = f"a {condition} {location}, {style}, highly detailed with a {centerImage} in its center."
     negative_prompt = "blurry, low quality, cartoon, painting, drawing"
 
     print(f"\nGenerated prompt: '{prompt}'")
